@@ -2,25 +2,35 @@ package com.newsgg.entity;
 
 import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.*;
 
 @Entity
 public class UserEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	public int userId;
-	public String userName;
-	public String userPassword;
-	public List<String> newsPreferences;
-	public List<String> favourites;
-	public String phoneNumber;
-	
-	
-	public int getUserId() {
+	private int userId;
+    private String userName;
+    private String userPassword;
+    private List<String> newsPreferences;
+    private List<String> favourites;
+    private String phoneNumber;
+    @Convert(converter = CachedNewsConverter.class)
+    @Column(columnDefinition = "TEXT")
+    private List<NewsAPI.Article> cachedNews;
+
+
+    public List<NewsAPI.Article> getCachedNews() {
+        return cachedNews;
+    }
+
+    public void setCachedNews(List<NewsAPI.Article> cachedNews) {
+        this.cachedNews = cachedNews;
+    }
+
+    public int getUserId() {
 		return userId;
 	}
 	public void setUserId(int userId) {
@@ -56,8 +66,6 @@ public class UserEntity {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	
-	
 	
 
 }

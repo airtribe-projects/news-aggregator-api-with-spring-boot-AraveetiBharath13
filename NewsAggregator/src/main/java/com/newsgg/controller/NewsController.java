@@ -1,14 +1,14 @@
 package com.newsgg.controller;
 
+import com.newsgg.entity.NewsAPI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.newsgg.entity.UserDTO;
 import com.newsgg.entity.UserEntity;
 import com.newsgg.service.UserService;
+
+import java.util.List;
 
 @RestController
 public class NewsController {
@@ -19,7 +19,7 @@ public class NewsController {
 	
 	@PostMapping("/api/register")
 	public String userRegistration(@RequestBody UserDTO user) {
-		
+
 		if(userService.registerUser(user) != null) {
 			return "User Register Sucessfully proceed to login";
 		}
@@ -33,5 +33,25 @@ public class NewsController {
 		
 		return userService.loginUser(username, password);
 	}
+
+    @GetMapping("/api/news")
+    public List<NewsAPI.Article> getFavourites(@RequestParam String userName) {
+         return userService.getCachedNews(userName);
+    }
+
+//    GET /api/preferences: Retrieve the news preferences for the logged-in user.
+//
+//    PUT /api/preferences
+
+    @GetMapping("/api/preferences")
+    public List<String> getPrefernces(@RequestParam String userName) {
+        return userService.getUserPreferences(userName);
+    }
+
+    @PutMapping("/api/preferences")
+    public List<String> updatePrefernces(@RequestParam String userName,
+                                         @RequestParam List<String> prefernces){
+        return userService.updateUserPrefernces(prefernces,userName);
+    }
 
 }

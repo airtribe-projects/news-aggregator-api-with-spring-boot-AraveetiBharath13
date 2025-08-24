@@ -8,6 +8,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
 public class TokenGeneratorUtility  {
 	
@@ -22,6 +23,34 @@ public class TokenGeneratorUtility  {
                 .compact();
 		
 	}
+
+    public static Claims validateSignedToken(String authorizationHeader) {
+        try {
+            Claims body = Jwts.parser()
+                    .setSigningKey("KdcgDPiU3WDtxMeRjR80XCwwQDU3lbVTHUn8EtqE88ilRP/lNhrdpSOA4YS7j1Tr")
+                    .build()
+                    .parseClaimsJws(authorizationHeader)
+                    .getBody();
+            System.out.print("Claims: " + body);
+            return body;
+        } catch (SignatureException exception) {
+            System.err.println("Invalid JWT signature: " + exception.getMessage());
+            return null;
+        } catch (io.jsonwebtoken.ExpiredJwtException exception) {
+            System.err.println("JWT token is expired: " + exception.getMessage());
+            return null;
+        } catch (io.jsonwebtoken.MalformedJwtException exception) {
+            System.err.println("Invalid JWT token: " + exception.getMessage());
+            return null;
+        } catch (io.jsonwebtoken.UnsupportedJwtException exception) {
+            System.err.println("JWT token is unsupported: " + exception.getMessage());
+            return null;
+        } catch (IllegalArgumentException exception) {
+            System.err.println("JWT claims string is empty: " + exception.getMessage());
+            return null;
+        }
+
+    }
 
 	public static boolean validateToken(String authHeader) {
 		try {
